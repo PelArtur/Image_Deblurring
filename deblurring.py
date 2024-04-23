@@ -69,7 +69,7 @@ def image_deblurring(config: dict) -> None:
     
     #get blurred image
     blurred_image = apply_psf(config, image, psf)
-        
+
     #If necessary, add noise
     if config["add_noise"]:
         mean = 0
