@@ -1,9 +1,43 @@
+"""
+Image Deblurring Script
+
+This script performs image deblurring using various parameters specified in a configuration file. It reads an 
+input image, applies a specified Point Spread Function (PSF) to simulate blurring, optionally adds Gaussian noise, 
+and then performs deblurring to recover the original image.
+
+Usage:
+    python image_deblurring.py config_file.cfg
+
+Dependencies:
+    - argparse
+    - configparser
+    - cv2 (OpenCV)
+    - numpy
+
+Functions:
+    - parse_config(path: str) -> dict[str, Any]:
+        Parses the configuration file and extracts parameters for image deblurring.
+
+    - save_images(config: dict, blurred_image: np.ndarray, deblurred_image: np.ndarray) -> None:
+        Saves the blurred and deblurred images to files specified in the configuration.
+
+    - apply_psf(config: dict, image: np.ndarray, psf: np.ndarray) -> np.ndarray:
+        Applies the Point Spread Function (PSF) to the input image to simulate blurring.
+
+    - image_deblurring(config: dict) -> None:
+        Performs the image deblurring process using the parameters specified in the configuration.
+
+Usage Example:
+    python image_deblurring.py config.cfg
+
+This script can be used for various image deblurring tasks by adjusting parameters such as the PSF type, PSF parameters, noise addition, and image display.
+"""
 import argparse
 import configparser
 import cv2 as cv
 
 import numpy as np
-from typing import Callable, Any
+from typing import Any
 from point_spread_functions import gaussian, defocus
 from image_noise import gaussian_noise
 
@@ -19,6 +53,16 @@ psf_function = {0: gaussian,
 
 
 def parse_config(path: str) -> dict[str, Any]:
+    """
+    Parses the configuration file and extracts parameters for image deblurring.
+
+    ----------
+    Parameters:
+        - path (str): Path to the configuration file.
+    ----------
+    Returns:
+        - dict[str, Any]: A dictionary containing the extracted parameters.
+    """
     config = configparser.ConfigParser()
     config.read(path)
     
@@ -43,11 +87,35 @@ def parse_config(path: str) -> dict[str, Any]:
     
 
 def save_images(config: dict, blurred_image: np.ndarray, deblurred_image: np.ndarray) -> None:
+    """
+    Saves the blurred and deblurred images to files specified in the configuration.
+
+    ----------
+    Parameters:
+        - config (dict): Dictionary containing configuration parameters.
+        - blurred_image (np.ndarray): Blurred image array.
+        - deblurred_image (np.ndarray): Deblurred image array.
+    ----------
+    Returns:
+        None
+    """
     cv.imwrite(config["blurred_image"], (blurred_image * 255).astype(int)) 
     cv.imwrite(config["deblurred_image"], (deblurred_image * 255).astype(int)) 
 
 
 def apply_psf(config: dict, image: np.ndarray, psf: np.ndarray) -> np.ndarray:
+    """
+    Applies the Point Spread Function (PSF) to the input image to simulate blurring.
+
+    ----------
+    Parameters:
+        - config (dict): Dictionary containing configuration parameters.
+        - image (np.ndarray): Input image array.
+        - psf (np.ndarray): Point Spread Function array.
+    ----------
+    Returns:
+        - np.ndarray: Blurred image array.
+    """
     res = np.zeros_like(image)
     if config["color"]:
         for channel in range(3):
@@ -59,6 +127,16 @@ def apply_psf(config: dict, image: np.ndarray, psf: np.ndarray) -> np.ndarray:
 
 
 def image_deblurring(config: dict) -> None:
+    """
+    Performs the image deblurring process using the parameters specified in the configuration.
+
+    ----------
+    Parameters:
+        - config (dict): Dictionary containing configuration parameters.
+    ----------
+    Returns:
+        None
+    """
     #convert image to matrix
     image = cv.imread(config["input_image"]).astype(float) / 255
     if not config["color"]:
@@ -104,6 +182,7 @@ def image_deblurring(config: dict) -> None:
 
 
 if __name__ == "__main__":
+    # Parse configuration file and perform image deblurring
     config = parse_config(args.config_path)
     image_deblurring(config)
         

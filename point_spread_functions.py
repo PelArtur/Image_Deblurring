@@ -45,6 +45,18 @@ def reshape_psf(psf: np.array, image_size: int) -> np.ndarray:
 
 
 def gaussian(n: int, sigma: float, image_size: int) -> np.ndarray:
+    """
+    Generates a Gaussian PSF with the specified parameters.
+
+    ----------
+    Parameters:
+        - n (int): The size of the PSF array.
+        - sigma (float): The standard deviation of the Gaussian distribution.
+        - image_size (int): The size of the desired image.
+    ----------
+    Returns:
+        np.array: The Gaussian PSF matrix.
+    """
     res = np.zeros(n)
     
     a = 1 / (2 * math.pi * pow(sigma, 2))
@@ -63,6 +75,18 @@ def gaussian(n: int, sigma: float, image_size: int) -> np.ndarray:
 
 
 def defocus(n: int, r: int, image_size: int) -> np.ndarray:
+    """
+    Generates a PSF simulating defocused image with the specified radius.
+
+    ----------
+    Parameters:
+        - n (int): The size of the PSF array.
+        - r (int): The radius parameter for the defocus.
+        - image_size (int): The size of the desired image.
+    ----------
+    Returns:
+        - np.ndarray: The defocused PSF matrix.
+    """
     res = np.zeros(n)
     
     elem = 1 / (math.pi * pow(r, 2))
